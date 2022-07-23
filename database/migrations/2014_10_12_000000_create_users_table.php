@@ -18,6 +18,8 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->unique();
             $table->timestamp('email_verified_at')->nullable();
+            $table->double('usd')->default(0.0);
+            $table->double('cdf')->default(0.0);
             $table->string('password');
             $table->string('token');
             $table->string('role');

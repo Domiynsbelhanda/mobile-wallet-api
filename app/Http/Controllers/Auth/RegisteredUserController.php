@@ -33,27 +33,30 @@ class RegisteredUserController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
-            'password' => ['required', 'confirmed', Rules\Password::defaults()],
-            'role'=> ['required', 'string']
-        ]);
+//        $request->validate([
+//            'name' => ['required', 'string', 'max:255'],
+//            'email' => ['required', 'string', 'email', 'max:255', 'unique:users'],
+//            'password' => ['required', 'confirmed', Rules\Password::defaults()],
+//            'role'=> ['required', 'string']
+//        ]);
 
-        $user = User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => encrypt($request->password),
-            'role'=>$request->role
-        ]);
+        $user = new User();
+        $user->name = $request->name;
+        $user->email = $request->email;
+        $user->password = Hash::make($request->password);
+        $user->role = $request->role;
+        $user->token = $request->role;
+        $user->save();
+//
+//        event(new Registered($user));
+//
+//        Auth::login($user);
 
-        event(new Registered($user));
-
-        Auth::login($user);
-
-        return response()->json([
+        return response()->json_encode([
             'code'=>1,
-            'message' => "Inscription réussi"
+            'message' => "Inscription réussi",
+            'token'=>$user->token,
+            'id'=>$user->id
         ]);
 
         //return redirect(RouteServiceProvider::HOME);
